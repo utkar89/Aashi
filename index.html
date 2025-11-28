@@ -1,557 +1,1014 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <title>Global IT Companies | 3D Earth</title>
-  <style>
-    * { box-sizing: border-box; }
+    <meta charset="UTF-8">
+    <title>Global IT Companies | 3D Earth</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
 
-    body {
-      margin: 0;
-      height: 100vh;
-      display: flex;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #020617;
-      color: #e5e7eb;
-    }
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: #020617;
+            color: #e5e7eb;
+        }
 
+        .layout {
+            display: flex;
+            width: 100%;
+            height: 100vh;
+        }
+
+        .sidebar {
+            width: 320px;
+            background: radial-gradient(circle at top, #111827, #020617);
+            border-right: 1px solid #1f2933;
+            padding: 16px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .app-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .subtitle {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-bottom: 12px;
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 11px;
+            background: rgba(37, 99, 235, 0.15);
+            color: #bfdbfe;
+            border: 1px solid rgba(59, 130, 246, 0.4);
+        }
+
+        .tag span.icon {
+            font-size: 14px;
+        }
+
+        .search-box {
+            margin-top: 8px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 8px 10px;
+            border-radius: 999px;
+            border: 1px solid #1f2933;
+            background: #020617;
+            color: #e5e7eb;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .search-box input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.5);
+        }
+
+        .filters {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        .filter-pill {
+            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 999px;
+            border: 1px solid #1f2937;
+            background: #020617;
+            cursor: pointer;
+            color: #9ca3af;
+        }
+
+        .filter-pill.active {
+            background: #2563eb;
+            color: #ffffff;
+            border-color: #2563eb;
+        }
+
+        .section-title {
+            margin-top: 10px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+        }
+
+        .company-list {
+            margin-top: 6px;
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .company-item {
+            padding: 8px 8px;
+            margin-bottom: 4px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            background: rgba(15, 23, 42, 0.9);
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .company-item:hover {
+            border-color: #1f2937;
+            background: rgba(15, 23, 42, 1);
+        }
+
+        .company-item.active {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.5);
+        }
+
+        .company-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #e5e7eb;
+        }
+
+        .company-meta {
+            font-size: 11px;
+            color: #9ca3af;
+        }
+
+        .company-tag-row {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-top: 2px;
+        }
+
+        .small-tag {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid #1f2937;
+            color: #9ca3af;
+        }
+
+        .small-tag.type-fulltime {
+            border-color: #22c55e;
+            color: #bbf7d0;
+        }
+
+        .small-tag.type-internship {
+            border-color: #eab308;
+            color: #facc15;
+        }
+
+        .small-tag.type-remote {
+            border-color: #38bdf8;
+            color: #bae6fd;
+        }
+
+        .details-card {
+            margin-top: 6px;
+            padding: 8px;
+            border-radius: 10px;
+            border: 1px solid #1f2937;
+            background: rgba(15, 23, 42, 0.95);
+            font-size: 12px;
+        }
+
+        .details-card h3 {
+            margin: 0 0 4px 0;
+            font-size: 14px;
+        }
+
+        .details-row {
+            margin-top: 3px;
+        }
+
+        .details-label {
+            color: #9ca3af;
+            font-size: 11px;
+        }
+
+        .details-value {
+            font-size: 12px;
+        }
+
+        .details-actions {
+            margin-top: 8px;
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            font-size: 11px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid #334155;
+            color: #e5e7eb;
+        }
+
+        .btn-ghost:hover {
+            background: #0f172a;
+        }
+
+        .globe-wrap {
+            flex: 1;
+            position: relative;
+        }
+
+        #globeContainer {
+            width: 100%;
+            height: 100%;
+        }
+
+        .hint {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            color: #9ca3af;
+            background: rgba(15, 23, 42, 0.8);
+            padding: 4px 8px;
+            border-radius: 999px;
+            border: 1px solid #1f2937;
+            pointer-events: none;
+        }
+
+        @media (max-width: 800px) {
     .layout {
-      display: flex;
-      width: 100%;
-      height: 100vh;
-    }
-
-    .sidebar {
-      width: 320px;
-      background: radial-gradient(circle at top, #111827, #020617);
-      border-right: 1px solid #1f2933;
-      padding: 16px 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .app-title {
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-
-    .subtitle {
-      font-size: 12px;
-      color: #9ca3af;
-      margin-bottom: 12px;
-    }
-
-    .tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 2px 8px;
-      border-radius: 999px;
-      font-size: 11px;
-      background: rgba(37, 99, 235, 0.15);
-      color: #bfdbfe;
-      border: 1px solid rgba(59, 130, 246, 0.4);
-    }
-
-    .tag span.icon {
-      font-size: 14px;
-    }
-
-    .search-box {
-      margin-top: 8px;
-    }
-
-    .search-box input {
-      width: 100%;
-      padding: 8px 10px;
-      border-radius: 999px;
-      border: 1px solid #1f2933;
-      background: #020617;
-      color: #e5e7eb;
-      font-size: 13px;
-      outline: none;
-    }
-
-    .search-box input:focus {
-      border-color: #2563eb;
-      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.5);
-    }
-
-    .filters {
-      display: flex;
-      gap: 6px;
-      margin-top: 8px;
-      flex-wrap: wrap;
-    }
-
-    .filter-pill {
-      font-size: 11px;
-      padding: 4px 8px;
-      border-radius: 999px;
-      border: 1px solid #1f2937;
-      background: #020617;
-      cursor: pointer;
-      color: #9ca3af;
-    }
-
-    .filter-pill.active {
-      background: #2563eb;
-      color: #ffffff;
-      border-color: #2563eb;
-    }
-
-    .section-title {
-      margin-top: 10px;
-      font-size: 12px;
-      font-weight: 600;
-      color: #9ca3af;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-    }
-
-    .company-list {
-      margin-top: 6px;
-      flex: 1;
-      overflow-y: auto;
-      padding-right: 4px;
-    }
-
-    .company-item {
-      padding: 8px 8px;
-      margin-bottom: 4px;
-      border-radius: 8px;
-      cursor: pointer;
-      border: 1px solid transparent;
-      background: rgba(15, 23, 42, 0.9);
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .company-item:hover {
-      border-color: #1f2937;
-      background: rgba(15, 23, 42, 1);
-    }
-
-    .company-item.active {
-      border-color: #2563eb;
-      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.5);
-    }
-
-    .company-name {
-      font-size: 13px;
-      font-weight: 600;
-      color: #e5e7eb;
-    }
-
-    .company-meta {
-      font-size: 11px;
-      color: #9ca3af;
-    }
-
-    .company-tag-row {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-      margin-top: 2px;
-    }
-
-    .small-tag {
-      font-size: 10px;
-      padding: 2px 6px;
-      border-radius: 999px;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid #1f2937;
-      color: #9ca3af;
-    }
-
-    .small-tag.type-fulltime { border-color: #22c55e; color: #bbf7d0; }
-    .small-tag.type-internship { border-color: #eab308; color: #facc15; }
-    .small-tag.type-remote { border-color: #38bdf8; color: #bae6fd; }
-
-    .details-card {
-      margin-top: 6px;
-      padding: 8px;
-      border-radius: 10px;
-      border: 1px solid #1f2937;
-      background: rgba(15, 23, 42, 0.95);
-      font-size: 12px;
-    }
-
-    .details-card h3 {
-      margin: 0 0 4px 0;
-      font-size: 14px;
-    }
-
-    .details-row {
-      margin-top: 3px;
-    }
-
-    .details-label {
-      color: #9ca3af;
-      font-size: 11px;
-    }
-
-    .details-value {
-      font-size: 12px;
-    }
-
-    .details-actions {
-      margin-top: 8px;
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    .btn {
-      font-size: 11px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: none;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .btn-primary {
-      background: #2563eb;
-      color: white;
-    }
-
-    .btn-primary:hover {
-      background: #1d4ed8;
-    }
-
-    .btn-ghost {
-      background: transparent;
-      border: 1px solid #334155;
-      color: #e5e7eb;
-    }
-
-    .btn-ghost:hover {
-      background: #0f172a;
-    }
-
-    .globe-wrap {
-      flex: 1;
-      position: relative;
-    }
-
-    #globeContainer {
-      width: 100%;
-      height: 100%;
-    }
-
-    .hint {
-      position: absolute;
-      bottom: 12px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 11px;
-      color: #9ca3af;
-      background: rgba(15, 23, 42, 0.8);
-      padding: 4px 8px;
-      border-radius: 999px;
-      border: 1px solid #1f2937;
-      pointer-events: none;
-    }
-
-    @media (max-width: 800px) {
-      .layout {
         flex-direction: column;
-      }
-      .sidebar {
+    }
+    .sidebar {
         width: 100%;
         height: 45vh;
-      }
-      .globe-wrap {
-        height: 55vh;
-      }
+        overflow-y: auto; /* ⭐ यह लाइन जोड़नी है */
     }
-  </style>
+    .globe-wrap {
+        height: 55vh;
+    }
+}
+
+    </style>
 </head>
+
 <body>
 
-<div class="layout">
-  <!-- LEFT SIDEBAR -->
-  <aside class="sidebar">
-    <div>
-      <div class="app-title">IT & CS Companies — Global Map</div>
-      <div class="subtitle">3D Earth • Click markers or list items to view full details.</div>
-      <div class="tag">
-        <span class="icon">🌍</span>
-        Interactive 3D globe • Demo
-      </div>
+    <div class="layout">
+        <!-- LEFT SIDEBAR -->
+        <aside class="sidebar">
+            <div>
+                <div class="app-title">IT & CS Companies — Global Map</div>
+                <div class="subtitle">3D Earth • Click markers or list items to view full details.</div>
+                <div class="tag">
+                    <span class="icon">🌍</span>
+                    Interactive 3D globe • Demo
+                </div>
+            </div>
+
+            <!-- SEARCH -->
+            <div class="search-box">
+                <input id="searchInput" type="text" placeholder="Search by company / country / city..." />
+            </div>
+
+            <!-- FILTERS -->
+            <div class="filters">
+                <button class="filter-pill active" data-type="all">All</button>
+                <button class="filter-pill" data-type="fulltime">Full-time</button>
+                <button class="filter-pill" data-type="internship">Internship</button>
+                <button class="filter-pill" data-type="remote">Remote</button>
+            </div>
+
+            <!-- LIST -->
+            <div class="section-title">Companies</div>
+            <div id="companyList" class="company-list"></div>
+
+            <!-- DETAILS -->
+            <div class="section-title">Details</div>
+            <div id="detailsCard" class="details-card">
+                <h3>Select a company</h3>
+                <div class="details-row">
+                    <span class="details-label">Hint: </span>
+                    <span class="details-value">Click any red point on the globe or an item in the list.</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- RIGHT GLOBE AREA -->
+        <main class="globe-wrap">
+            <div id="globeContainer"></div>
+            <div class="hint">Drag to rotate • Scroll to zoom • Click red markers for details</div>
+        </main>
     </div>
 
-    <!-- SEARCH -->
-    <div class="search-box">
-      <input id="searchInput" type="text" placeholder="Search by company / country / city..." />
-    </div>
+    <!-- SCRIPTS -->
+    <script src="https://unpkg.com/three"></script>
+    <script src="https://unpkg.com/globe.gl"></script>
 
-    <!-- FILTERS -->
-    <div class="filters">
-      <button class="filter-pill active" data-type="all">All</button>
-      <button class="filter-pill" data-type="fulltime">Full-time</button>
-      <button class="filter-pill" data-type="internship">Internship</button>
-      <button class="filter-pill" data-type="remote">Remote</button>
-    </div>
+    <script>
+        
+        // --- DATA: You can add more companies here ---
+        const companies = [
+            {
+  name: "TCS",
+  city: "Mumbai",
+  country: "India",
+  roles: "Full Stack Dev, QA, Support",
+  website: "https://www.tcs.com/careers",
+  type: "fulltime",
+  lat: 19.0760, lng: 72.8777
+},
+{
+  name: "Infosys",
+  city: "Bangalore",
+  country: "India",
+  roles: "Backend Developer, Systems Engineer",
+  website: "https://www.infosys.com/careers",
+  type: "fulltime",
+  lat: 12.9716, lng: 77.5946
+},
+{
+  name: "Wipro",
+  city: "Bangalore",
+  country: "India",
+  roles: "Cyber Security, Support Engineer",
+  website: "https://careers.wipro.com/",
+  type: "fulltime",
+  lat: 12.9716, lng: 77.5946
+},
+{
+  name: "HCLTech",
+  city: "Noida",
+  country: "India",
+  roles: "Software Engineer, Cloud, DevOps",
+  website: "https://www.hcltech.com/careers",
+  type: "fulltime",
+  lat: 28.5355, lng: 77.3910
+},
+{
+  name: "Tech Mahindra",
+  city: "Pune",
+  country: "India",
+  roles: "Java / .NET Developer",
+  website: "https://careers.techmahindra.com/",
+  type: "fulltime",
+  lat: 18.5204, lng: 73.8567
+},
+{
+  name: "LTIMindtree",
+  city: "Bangalore",
+  country: "India",
+  roles: "Full Stack, Data Engineer",
+  website: "https://careers.ltimindtree.com/",
+  type: "fulltime",
+  lat: 12.9716, lng: 77.5946
+},
+{
+  name: "Accenture India",
+  city: "Bangalore",
+  country: "India",
+  roles: "Application Development, Cloud, Security",
+  website: "https://www.accenture.com/in-en/careers",
+  type: "fulltime",
+  lat: 12.9716, lng: 77.5946
+},
+{
+  name: "IBM India",
+  city: "Hyderabad",
+  country: "India",
+  roles: "AI/ML Engineer, Cloud Engineer",
+  website: "https://www.ibm.com/careers",
+  type: "fulltime",
+  lat: 17.3850, lng: 78.4867
+},
+{
+  name: "Capgemini",
+  city: "Mumbai",
+  country: "India",
+  roles: "Application Developer / Support",
+  website: "https://www.capgemini.com/in-en/careers/",
+  type: "fulltime",
+  lat: 19.0760, lng: 72.8777
+},
+{
+  name: "Zoho",
+  city: "Chennai",
+  country: "India",
+  roles: "SDE / Backend / Mobile",
+  website: "https://careers.zoho.com/",
+  type: "fulltime",
+  lat: 13.0674, lng: 80.2376
+},
+{
+  name: "Paytm",
+  city: "Noida",
+  country: "India",
+  roles: "Backend, SDE, Product",
+  website: "https://paytm.com/careers",
+  type: "fulltime",
+  lat: 28.5355, lng: 77.3910
+},
+{
+  name: "Flipkart",
+  city: "Bangalore",
+  country: "India",
+  roles: "SDE-1, SDE-2, DevOps",
+  website: "https://www.flipkartcareers.com/",
+  type: "fulltime",
+  lat: 12.9716, lng: 77.5946
+},
+{
+  name: "PhonePe",
+  city: "Bangalore",
+  country: "India",
+  roles: "Full Stack, Data Engineer",
+  website: "https://careers.phonepe.com/",
+  type: "fulltime",
+  lat: 12.9716, lng: 77.5946
+},
+{
+  name: "Razorpay",
+  city: "Bangalore",
+  country: "India",
+  roles: "Backend Developer",
+  website: "https://razorpay.com/careers/",
+  type: "fulltime",
+  lat: 12.9716, lng: 77.5946
+},
+{
+  name: "Freshworks",
+  city: "Chennai",
+  country: "India",
+  roles: "Software Engineer / Support Engineer",
+  website: "https://careers.freshworks.com/",
+  type: "fulltime",
+  lat: 13.0674, lng: 80.2376
+},
+{
+  name: "Ola Electric",
+  city: "Bangalore",
+  country: "India",
+  roles: "AI, Embedded, Software",
+  website: "https://olaelectric.com/careers",
+  type: "fulltime",
+  lat: 12.9716, lng: 77.5946
+},
+{
+  name: "Cars24",
+  city: "Gurugram",
+  country: "India",
+  roles: "SDE / Frontend / Backend",
+  website: "https://www.cars24.com/careers/",
+  type: "fulltime",
+  lat: 28.4595, lng: 77.0266
+},
+{
+  name: "BYJU'S",
+  city: "Bangalore",
+  country: "India",
+  roles: "Software Engineer, Data, QA",
+  website: "https://byjus.com/careers/",
+  type: "fulltime",
+  lat: 12.9716, lng: 77.5946
+},
+{
+  name: "Meesho",
+  city: "Bangalore",
+  country: "India",
+  roles: "SDE-1 / SDE-2 / Platform Engineer",
+  website: "https://careers.meesho.com/",
+  type: "fulltime",
+  lat: 12.9716, lng: 77.5946
+},
+{
+  name: "Swiggy",
+  city: "Bangalore",
+  country: "India",
+  roles: "Backend, Mobile, Data",
+  website: "https://careers.swiggy.com/",
+  type: "fulltime",
+  lat: 12.9716, lng: 77.5946
+},
+{
+  name: "TCS – Ignite Internship",
+  city: "Chennai",
+  country: "India",
+  roles: "Graduate Hiring + Training + Internship",
+  website: "https://www.tcs.com/careers",
+  type: "internship",
+  lat: 13.0827, lng: 80.2707
+},
+{
+  name: "Infosys – Instep Internship",
+  city: "Mysore",
+  country: "India",
+  roles: "Instep Global Internship Program",
+  website: "https://www.infosys.com/instep",
+  type: "internship",
+  lat: 12.2958, lng: 76.6394
+},
+{
+  name: "Flipkart Grid Internship",
+  city: "Bangalore",
+  country: "India",
+  roles: "Hackathon → SDE Intern → PPO",
+  website: "https://www.flipkartcareers.com/",
+  type: "internship",
+  lat: 12.9716, lng: 77.5946
+},
+{
+  name: "Paytm Campus Internship",
+  city: "Noida",
+  country: "India",
+  roles: "SDE Intern / Product Intern / Finance Intern",
+  website: "https://paytm.com/careers",
+  type: "internship",
+  lat: 28.5355, lng: 77.3910
+},
+{
+  name: "Zoho Internship",
+  city: "Chennai",
+  country: "India",
+  roles: "Backend / Mobile / Web Developer Intern",
+  website: "https://careers.zoho.com/",
+  type: "internship",
+  lat: 13.0674, lng: 80.2376
+},
+{
+  name: "Ola Internship",
+  city: "Bangalore",
+  country: "India",
+  roles: "AI/ML Intern, Software Intern",
+  website: "https://olaelectric.com/careers",
+  type: "internship",
+  lat: 12.9716, lng: 77.5946
+},
+{
+  name: "Airtel Internship",
+  city: "Gurugram",
+  country: "India",
+  roles: "SDE + Telecom Tech",
+  website: "https://careers.airtel.com/",
+  type: "internship",
+  lat: 28.4595, lng: 77.0266
+},
+{
+  name: "Tata Elxsi",
+  city: "Bangalore",
+  country: "India",
+  roles: "Embedded Internship + Software Internship",
+  website: "https://tataelxsi.com/careers",
+  type: "internship",
+  lat: 12.9716, lng: 77.5946
+},
+{
+  name: "Cyient Internship",
+  city: "Hyderabad",
+  country: "India",
+  roles: "Software + Aerospace Tech + Data",
+  website: "https://www.cyient.careers",
+  type: "internship",
+  lat: 17.3850, lng: 78.4867
+},
+{
+  name: "Mindtree – Campus Internship",
+  city: "Bangalore",
+  country: "India",
+  roles: "Full Stack + Cloud Internship",
+  website: "https://careers.ltimindtree.com/",
+  type: "internship",
+  lat: 12.9716, lng: 77.5946
+},
+{
+  name: "Hexaware",
+  city: "Chennai",
+  country: "India",
+  roles: "Internship + Graduate Trainee",
+  website: "https://hexaware.com/careers/",
+  type: "internship",
+  lat: 13.0674, lng: 80.2376
+},
+{
+  name: "Persistent Systems",
+  city: "Pune",
+  country: "India",
+  roles: "Intern → FTE Conversion",
+  website: "https://careers.persistent.com/",
+  type: "internship",
+  lat: 18.5204, lng: 73.8567
+},
+{
+  name: "Cognizant Internship",
+  city: "Kolkata",
+  country: "India",
+  roles: "GenC + Internship",
+  website: "https://www.cognizant.com/careers",
+  type: "internship",
+  lat: 22.5726, lng: 88.3639
+},
+{
+  name: "Goldman Sachs India Internship",
+  city: "Bangalore",
+  country: "India",
+  roles: "Summer Analyst Internship",
+  website: "https://www.goldmansachs.com/careers/",
+  type: "internship",
+  lat: 12.9716, lng: 77.5946
+},
+{
+  name: "Reliance Jio Internship",
+  city: "Mumbai",
+  country: "India",
+  roles: "Software + 5G Research Internship",
+  website: "https://careers.jio.com/",
+  type: "internship",
+  lat: 19.0760, lng: 72.8777
+},
+{
+  name: "Bosch Internship",
+  city: "Bangalore",
+  country: "India",
+  roles: "Embedded, Automotive Software",
+  website: "https://www.bosch-career.com/",
+  type: "internship",
+  lat: 12.9716, lng: 77.5946
+},
+{
+  name: "Myntra Internship",
+  city: "Bangalore",
+  country: "India",
+  roles: "SDE Intern + App Developer",
+  website: "https://careers.myntra.com/",
+  type: "internship",
+  lat: 12.9716, lng: 77.5946
+},
+{
+  name: "Juspay Internship",
+  city: "Bangalore",
+  country: "India",
+  roles: "Functional Programming Intern",
+  website: "https://juspay.in/careers",
+  type: "internship",
+  lat: 12.9716, lng: 77.5946
+},
+{
+  name: "Naukri.com",
+  city: "Noida",
+  country: "India",
+  roles: "Remote Jobs Platform (Tech Hiring)",
+  website: "https://www.naukri.com/",
+  type: "remote",
+  lat: 28.5355, lng: 77.3910
+},
+{
+  name: "Turing",
+  city: "Remote",
+  country: "India",
+  roles: "Remote AI/ML/Software Jobs (WFH)",
+  website: "https://www.turing.com/",
+  type: "remote",
+  lat: 28.6139, lng: 77.2090
+},
+{
+  name: "Scaler",
+  city: "Bangalore",
+  country: "India",
+  roles: "SDE / Content Engineer (Remote + Hybrid)",
+  website: "https://www.scaler.com/careers/",
+  type: "remote",
+  lat: 12.9716, lng: 77.5946
+},
+{
+  name: "Coding Ninjas",
+  city: "Gurugram",
+  country: "India",
+  roles: "Teaching + Backend + Remote Support",
+  website: "https://www.codingninjas.com/careers",
+  type: "remote",
+  lat: 28.4595, lng: 77.0266
+},
+{
+  name: "GeeksforGeeks",
+  city: "Noida",
+  country: "India",
+  roles: "Content + DS Algo + Engineering (Remote Options)",
+  website: "https://www.geeksforgeeks.org/careers/",
+  type: "remote",
+  lat: 28.5355, lng: 77.3910
+},
+{
+  name: "Accolite Digital",
+  city: "Bangalore",
+  country: "India",
+  roles: "Java / AWS / Full Stack Developer",
+  website: "https://www.accolite.com/careers",
+  type: "fulltime",
+  lat: 12.9716, lng: 77.5946
+},
+{
+  name: "Deloitte India",
+  city: "Hyderabad",
+  country: "India",
+  roles: "Consulting, Cyber Security, Cloud Engineer",
+  website: "https://jobsindia.deloitte.com/",
+  type: "fulltime",
+  lat: 17.3850, lng: 78.4867
+},
+{
+  name: "EY GDS",
+  city: "Bangalore",
+  country: "India",
+  roles: "Data Engineer, Security Analyst, .NET Developer",
+  website: "https://careers.ey.com/",
+  type: "fulltime",
+  lat: 12.9716, lng: 77.5946
+},
+{
+  name: "KPMG India",
+  city: "Gurugram",
+  country: "India",
+  roles: "Data Analyst, Advisory Tech, DevOps",
+  website: "https://www.kpmg.com/in/en/careers",
+  type: "fulltime",
+  lat: 28.4595, lng: 77.0266
+},
+{
+  name: "Oracle India",
+  city: "Bangalore",
+  country: "India",
+  roles: "Cloud Engineer, DB Developer, Java Developer",
+  website: "https://careers.oracle.com/",
+  type: "fulltime",
+  lat: 12.9716, lng: 77.5946
+},
+{
+  name: "Siemens India",
+  city: "Bangalore",
+  country: "India",
+  roles: "Embedded, Automation, Full Stack",
+  website: "https://new.siemens.com/in/en/company/jobs.html",
+  type: "fulltime",
+  lat: 12.9716, lng: 77.5946
+},
+{
+  name: "JP Morgan India",
+  city: "Mumbai",
+  country: "India",
+  roles: "Software Engineering, Quant, Data",
+  website: "https://careers.jpmorgan.com/",
+  type: "fulltime",
+  lat: 19.0760, lng: 72.8777
+},
+{
+  name: "SAP Labs India",
+  city: "Bangalore",
+  country: "India",
+  roles: "Backend / ERP Developer / Data",
+  website: "https://www.sap.com/about/careers.html",
+  type: "fulltime",
+  lat: 12.9716, lng: 77.5946
+},
+{
+  name: "Barclays Tech India",
+  city: "Pune",
+  country: "India",
+  roles: "DevOps / Cloud / Java Developer",
+  website: "https://search.jobs.barclays/",
+  type: "fulltime",
+  lat: 18.5204, lng: 73.8567
+},
+{
+  name: "Societe Generale (SG GSC)",
+  city: "Bangalore",
+  country: "India",
+  roles: "Python, Investment Banking Tech",
+  website: "https://careers.societegenerale.com/",
+  type: "fulltime",
+  lat: 12.9716, lng: 77.5946
+},
+{
+  name: "CRED",
+  city: "Bangalore",
+  country: "India",
+  roles: "Backend, Mobile, Platform Engineering",
+  website: "https://careers.cred.club/",
+  type: "fulltime",
+  lat: 12.9716, lng: 77.5946
+},
+{
+  name: "Acko",
+  city: "Bangalore",
+  country: "India",
+  roles: "Full Stack, Data, Security",
+  website: "https://www.acko.com/careers/",
+  type: "fulltime",
+  lat: 12.9716, lng: 77.5946
+},
+{
+  name: "BigBasket",
+  city: "Bangalore",
+  country: "India",
+  roles: "SDE / Data / Platform Engineer",
+  website: "https://careers.bigbasket.com/",
+  type: "fulltime",
+  lat: 12.9716, lng: 77.5946
+},
+{
+  name: "RedBus",
+  city: "Bangalore",
+  country: "India",
+  roles: "Mobile / Backend / Testing",
+  website: "https://www.redbus.in/careers/",
+  type: "fulltime",
+  lat: 12.9716, lng: 77.5946
+},
+{
+  name: "Mahindra Comviva",
+  city: "Gurugram",
+  country: "India",
+  roles: "Java Developer, Big Data Engineer",
+  website: "https://www.comviva.com/careers/",
+  type: "fulltime",
+  lat: 28.4595, lng: 77.0266
+},
+{
+  name: "InMobi",
+  city: "Bangalore",
+  country: "India",
+  roles: "AdTech — SDE / ML / Data",
+  website: "https://www.inmobi.com/company/careers/",
+  type: "fulltime",
+  lat: 12.9716, lng: 77.5946
+},
+{
+  name: "Practo",
+  city: "Bangalore",
+  country: "India",
+  roles: "SDE / Android / Backend",
+  website: "https://practo.com/company/careers",
+  type: "fulltime",
+  lat: 12.9716, lng: 77.5946
+},
+{
+  name: "FreshToHome",
+  city: "Bangalore",
+  country: "India",
+  roles: "Platform Engineer / Software Developer",
+  website: "https://freshtohome.com/careers",
+  type: "fulltime",
+  lat: 12.9716, lng: 77.5946
+},
+{
+  name: "Ericsson India",
+  city: "Noida",
+  country: "India",
+  roles: "Network Software / Telecom Tech",
+  website: "https://www.ericsson.com/en/careers",
+  type: "fulltime",
+  lat: 28.5355, lng: 77.3910
+},
+{
+  name: "AMD India",
+  city: "Hyderabad",
+  country: "India",
+  roles: "GPU / Hardware / Software Performance",
+  website: "https://jobs.amd.com/",
+  type: "fulltime",
+  lat: 17.3850, lng: 78.4867
+}
 
-    <!-- LIST -->
-    <div class="section-title">Companies</div>
-    <div id="companyList" class="company-list"></div>
 
-    <!-- DETAILS -->
-    <div class="section-title">Details</div>
-    <div id="detailsCard" class="details-card">
-      <h3>Select a company</h3>
-      <div class="details-row">
-        <span class="details-label">Hint: </span>
-        <span class="details-value">Click any red point on the globe or an item in the list.</span>
-      </div>
-    </div>
-  </aside>
 
-  <!-- RIGHT GLOBE AREA -->
-  <main class="globe-wrap">
-    <div id="globeContainer"></div>
-    <div class="hint">Drag to rotate • Scroll to zoom • Click red markers for details</div>
-  </main>
-</div>
+        ];
 
-<!-- SCRIPTS -->
-<script src="https://unpkg.com/three"></script>
-<script src="https://unpkg.com/globe.gl"></script>
+        // Labels for countries (for clarity)
+        const countryLabels = [
+            { lat: 20.5937, lng: 78.9629, label: "India" },
+            { lat: 37.0902, lng: -95.7129, label: "USA" },
+            { lat: 51.1657, lng: 10.4515, label: "Germany" },
+            { lat: 36.2048, lng: 138.2529, label: "Japan" },
+            { lat: -25.2744, lng: 133.7751, label: "Australia" },
+            { lat: 56.1304, lng: -106.3468, label: "Canada" },
+            { lat: 59.334, lng: 18.0686, label: "Sweden" }
+        ];
 
-<script>
-  // --- DATA: You can add more companies here ---
-  const companies = [
-    {
-      name: "Google",
-      city: "Mountain View",
-      country: "USA",
-      roles: "SDE, ML Engineer, Data Scientist",
-      website: "https://careers.google.com/",
-      type: "fulltime",
-      lat: 37.422, lng: -122.084
-    },
-    {
-      name: "Microsoft",
-      city: "Redmond",
-      country: "USA",
-      roles: "Cloud Engineer, AI Engineer",
-      website: "https://careers.microsoft.com/",
-      type: "fulltime",
-      lat: 47.6401, lng: -122.1295
-    },
-    {
-      name: "Amazon",
-      city: "Seattle",
-      country: "USA",
-      roles: "SDE, Data Engineer, SRE",
-      website: "https://www.amazon.jobs/",
-      type: "fulltime",
-      lat: 47.6225, lng: -122.3365
-    },
-    {
-      name: "Meta (Facebook)",
-      city: "Menlo Park",
-      country: "USA",
-      roles: "Frontend, Backend, AR/VR",
-      website: "https://www.metacareers.com/",
-      type: "fulltime",
-      lat: 37.4848, lng: -122.1484
-    },
-    {
-      name: "Apple",
-      city: "Cupertino",
-      country: "USA",
-      roles: "iOS Dev, Systems Engineer",
-      website: "https://www.apple.com/careers/",
-      type: "fulltime",
-      lat: 37.3349, lng: -122.0090
-    },
-    {
-      name: "Infosys",
-      city: "Bangalore",
-      country: "India",
-      roles: "Backend Developer, Internship",
-      website: "https://www.infosys.com/careers",
-      type: "internship",
-      lat: 12.9716, lng: 77.5946
-    },
-    {
-      name: "TCS",
-      city: "Mumbai",
-      country: "India",
-      roles: "Full Stack Dev, QA, Fresher Hiring",
-      website: "https://www.tcs.com/careers",
-      type: "fulltime",
-      lat: 19.0760, lng: 72.8777
-    },
-    {
-      name: "Wipro",
-      city: "Bangalore",
-      country: "India",
-      roles: "Cyber Security, Support Engineer",
-      website: "https://careers.wipro.com/",
-      type: "fulltime",
-      lat: 12.9716, lng: 77.5946
-    },
-    {
-      name: "HCLTech",
-      city: "Noida",
-      country: "India",
-      roles: "Software Engineer, Remote Options",
-      website: "https://www.hcltech.com/careers",
-      type: "remote",
-      lat: 28.5355, lng: 77.3910
-    },
-    {
-      name: "IBM",
-      city: "New York",
-      country: "USA",
-      roles: "Consultant, Cloud, AI",
-      website: "https://www.ibm.com/careers",
-      type: "fulltime",
-      lat: 40.7549, lng: -73.9840
-    },
-    {
-      name: "SAP",
-      city: "Walldorf",
-      country: "Germany",
-      roles: "Backend, ERP Developer",
-      website: "https://www.sap.com/about/careers.html",
-      type: "fulltime",
-      lat: 49.3064, lng: 8.6415
-    },
-    {
-      name: "Spotify",
-      city: "Stockholm",
-      country: "Sweden",
-      roles: "Backend, Data, Internship",
-      website: "https://www.lifeatspotify.com/",
-      type: "internship",
-      lat: 59.3293, lng: 18.0686
-    },
-    {
-      name: "Atlassian",
-      city: "Sydney",
-      country: "Australia",
-      roles: "Remote-first, Full Stack",
-      website: "https://www.atlassian.com/company/careers",
-      type: "remote",
-      lat: -33.8688, lng: 151.2093
-    },
-    {
-      name: "Shopify",
-      city: "Remote",
-      country: "Canada",
-      roles: "Remote Dev, Frontend/Backend",
-      website: "https://www.shopify.com/careers",
-      type: "remote",
-      lat: 43.6532, lng: -79.3832
-    },
-    {
-      name: "OpenAI",
-      city: "San Francisco",
-      country: "USA",
-      roles: "Research, ML Engineer",
-      website: "https://openai.com/careers",
-      type: "fulltime",
-      lat: 37.7749, lng: -122.4194
-    }
-  ];
+        const globeContainer = document.getElementById("globeContainer");
 
-  // Labels for countries (for clarity)
-  const countryLabels = [
-    { lat: 20.5937, lng: 78.9629, label: "India" },
-    { lat: 37.0902, lng: -95.7129, label: "USA" },
-    { lat: 51.1657, lng: 10.4515, label: "Germany" },
-    { lat: 36.2048, lng: 138.2529, label: "Japan" },
-    { lat: -25.2744, lng: 133.7751, label: "Australia" },
-    { lat: 56.1304, lng: -106.3468, label: "Canada" },
-    { lat: 59.334, lng: 18.0686, label: "Sweden" }
-  ];
+        const world = Globe()(globeContainer)
+            .globeImageUrl("https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg")
+            .bumpImageUrl("https://unpkg.com/three-globe/example/img/earth-topology.png")
+            .backgroundImageUrl("https://unpkg.com/three-globe/example/img/night-sky.png")
+            .labelsData(countryLabels)
+            .labelColor(() => "#38bdf8")
+            .labelSize(1.2)
+            .labelDotRadius(0.25)
+            .pointAltitude(0.06)
+            .pointColor(c =>
+                c.type === "internship" ? "yellow" :
+                    c.type === "remote" ? "cyan" :
+                        "red"
+            )
+            .pointRadius(0.35)
+            .pointsData(companies)
+            // pulse rings
+            .ringColor(() => "rgba(248, 113, 113, 0.7)")
+            .ringMaxRadius(4)
+            .ringPropagationSpeed(2)
+            .ringRepeatPeriod(2000);
 
-  const globeContainer = document.getElementById("globeContainer");
+        // slow auto-rotation
+        world.controls().autoRotate = true;
+        world.controls().autoRotateSpeed = 0.5;
 
-  const world = Globe()(globeContainer)
-    .globeImageUrl("https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg")
-    .bumpImageUrl("https://unpkg.com/three-globe/example/img/earth-topology.png")
-    .backgroundImageUrl("https://unpkg.com/three-globe/example/img/night-sky.png")
-    .labelsData(countryLabels)
-    .labelColor(() => "#38bdf8")
-    .labelSize(1.2)
-    .labelDotRadius(0.25)
-    .pointAltitude(0.06)
-    .pointColor(() => "red")
-    .pointRadius(0.35)
-    .pointsData(companies)
-    // pulse rings
-    .ringColor(() => "rgba(248, 113, 113, 0.7)")
-    .ringMaxRadius(4)
-    .ringPropagationSpeed(2)
-    .ringRepeatPeriod(2000);
+        // STATE
+        let currentTypeFilter = "all";
+        let currentSearch = "";
+        let activeCompany = null;
 
-  // slow auto-rotation
-  world.controls().autoRotate = true;
-  world.controls().autoRotateSpeed = 0.5;
+        const listEl = document.getElementById("companyList");
+        const detailsEl = document.getElementById("detailsCard");
+        const searchInput = document.getElementById("searchInput");
+        const filterButtons = document.querySelectorAll(".filter-pill");
 
-  // STATE
-  let currentTypeFilter = "all";
-  let currentSearch = "";
-  let activeCompany = null;
+        function applyFilters() {
+            const search = currentSearch.trim().toLowerCase();
 
-  const listEl = document.getElementById("companyList");
-  const detailsEl = document.getElementById("detailsCard");
-  const searchInput = document.getElementById("searchInput");
-  const filterButtons = document.querySelectorAll(".filter-pill");
+            const filtered = companies.filter(c => {
+                // type filter
+                if (currentTypeFilter !== "all" && c.type !== currentTypeFilter) return false;
 
-  function applyFilters() {
-    const search = currentSearch.trim().toLowerCase();
+                // search filter
+                if (search) {
+                    const text = (c.name + " " + c.city + " " + c.country).toLowerCase();
+                    if (!text.includes(search)) return false;
+                }
+                return true;
+            });
 
-    const filtered = companies.filter(c => {
-      // type filter
-      if (currentTypeFilter !== "all" && c.type !== currentTypeFilter) return false;
+            world.pointsData(filtered);
+            renderCompanyList(filtered);
 
-      // search filter
-      if (search) {
-        const text = (c.name + " " + c.city + " " + c.country).toLowerCase();
-        if (!text.includes(search)) return false;
-      }
-      return true;
-    });
+            // rings only on active company still in filtered list
+            if (activeCompany && filtered.includes(activeCompany)) {
+                world.ringsData([activeCompany]);
+            } else {
+                world.ringsData([]);
+                activeCompany = null;
+                resetDetailsCard();
+            }
+        }
 
-    world.pointsData(filtered);
-    renderCompanyList(filtered);
+        function renderCompanyList(list) {
+            listEl.innerHTML = "";
+            list.forEach(c => {
+                const item = document.createElement("div");
+                item.className = "company-item";
+                item.dataset.name = c.name;
 
-    // rings only on active company still in filtered list
-    if (activeCompany && filtered.includes(activeCompany)) {
-      world.ringsData([activeCompany]);
-    } else {
-      world.ringsData([]);
-      activeCompany = null;
-      resetDetailsCard();
-    }
-  }
+                if (activeCompany && activeCompany.name === c.name) {
+                    item.classList.add("active");
+                }
 
-  function renderCompanyList(list) {
-    listEl.innerHTML = "";
-    list.forEach(c => {
-      const item = document.createElement("div");
-      item.className = "company-item";
-      item.dataset.name = c.name;
-
-      if (activeCompany && activeCompany.name === c.name) {
-        item.classList.add("active");
-      }
-
-      item.innerHTML = `
+                item.innerHTML = `
         <div class="company-name">${c.name}</div>
         <div class="company-meta">${c.city}, ${c.country}</div>
         <div class="company-tag-row">
@@ -561,30 +1018,30 @@
         </div>
       `;
 
-      item.addEventListener("click", () => {
-        focusOnCompany(c);
-      });
+                item.addEventListener("click", () => {
+                    focusOnCompany(c);
+                });
 
-      listEl.appendChild(item);
-    });
+                listEl.appendChild(item);
+            });
 
-    if (!list.length) {
-      listEl.innerHTML = `<div style="font-size:12px;color:#9ca3af;margin-top:4px;">No companies found for this filter.</div>`;
-    }
-  }
+            if (!list.length) {
+                listEl.innerHTML = `<div style="font-size:12px;color:#9ca3af;margin-top:4px;">No companies found for this filter.</div>`;
+            }
+        }
 
-  function resetDetailsCard() {
-    detailsEl.innerHTML = `
+        function resetDetailsCard() {
+            detailsEl.innerHTML = `
       <h3>Select a company</h3>
       <div class="details-row">
         <span class="details-label">Hint: </span>
         <span class="details-value">Use the list or click red markers on the globe.</span>
       </div>
     `;
-  }
+        }
 
-  function updateDetailsCard(c) {
-    detailsEl.innerHTML = `
+        function updateDetailsCard(c) {
+            detailsEl.innerHTML = `
       <h3>${c.name}</h3>
       <div class="details-row">
         <span class="details-label">Location: </span>
@@ -596,11 +1053,10 @@
       </div>
       <div class="details-row">
         <span class="details-label">Type: </span>
-        <span class="details-value">${
-          c.type === "fulltime" ? "Full-time" :
-          c.type === "internship" ? "Internship / Fresher Friendly" :
-          "Remote (Work From Home)"
-        }</span>
+        <span class="details-value">${c.type === "fulltime" ? "Full-time" :
+                    c.type === "internship" ? "Internship / Fresher Friendly" :
+                        "Remote (Work From Home)"
+                }</span>
       </div>
       <div class="details-actions">
         <a class="btn btn-primary" href="${c.website}" target="_blank" rel="noopener">
@@ -611,50 +1067,51 @@
         </button>
       </div>
     `;
-  }
+        }
 
-  function focusOnCompany(c) {
-    activeCompany = c;
-    updateDetailsCard(c);
+        function focusOnCompany(c) {
+            activeCompany = c;
+            updateDetailsCard(c);
 
-    // focus globe camera
-    world.pointOfView({ lat: c.lat, lng: c.lng, altitude: 1.5 }, 1000);
+            // focus globe camera
+            world.pointOfView({ lat: c.lat, lng: c.lng, altitude: 1.5 }, 1000);
 
-    // pulse rings on selected company
-    world.ringsData([c]);
+            // pulse rings on selected company
+            world.ringsData([c]);
 
-    // update active class on list
-    document.querySelectorAll(".company-item").forEach(el => {
-      el.classList.toggle("active", el.dataset.name === c.name);
-    });
-  }
+            // update active class on list
+            document.querySelectorAll(".company-item").forEach(el => {
+                el.classList.toggle("active", el.dataset.name === c.name);
+            });
+        }
 
-  // click on globe marker
-  world.onPointClick(c => {
-    // find from original list (so same object ref)
-    const found = companies.find(x => x.name === c.name);
-    if (found) focusOnCompany(found);
-  });
+        // click on globe marker
+        world.onPointClick(c => {
+            // find from original list (so same object ref)
+            const found = companies.find(x => x.name === c.name);
+            if (found) focusOnCompany(found);
+        });
 
-  // Search input handler
-  searchInput.addEventListener("input", (e) => {
-    currentSearch = e.target.value;
-    applyFilters();
-  });
+        // Search input handler
+        searchInput.addEventListener("input", (e) => {
+            currentSearch = e.target.value;
+            applyFilters();
+        });
 
-  // Filter buttons handler
-  filterButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-      filterButtons.forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      currentTypeFilter = btn.dataset.type;
-      applyFilters();
-    });
-  });
+        // Filter buttons handler
+        filterButtons.forEach(btn => {
+            btn.addEventListener("click", () => {
+                filterButtons.forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+                currentTypeFilter = btn.dataset.type;
+                applyFilters();
+            });
+        });
 
-  // initial render
-  renderCompanyList(companies);
-</script>
+        // initial render
+        renderCompanyList(companies);
+    </script>
 
 </body>
+
 </html>
