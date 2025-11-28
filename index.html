@@ -1,525 +1,660 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Utkarsh Learning Challenge</title>
-  <link rel="stylesheet" href="style.css">
-  <!-- Firebase SDK -->
- <!-- Firebase (Compat Version - mobile safe) -->
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <title>Global IT Companies | 3D Earth</title>
+  <style>
+    * { box-sizing: border-box; }
 
-  <!-- Font Awesome (icons ke liye) -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #020617;
+      color: #e5e7eb;
+    }
 
+    .layout {
+      display: flex;
+      width: 100%;
+      height: 100vh;
+    }
+
+    .sidebar {
+      width: 320px;
+      background: radial-gradient(circle at top, #111827, #020617);
+      border-right: 1px solid #1f2933;
+      padding: 16px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .app-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .subtitle {
+      font-size: 12px;
+      color: #9ca3af;
+      margin-bottom: 12px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      background: rgba(37, 99, 235, 0.15);
+      color: #bfdbfe;
+      border: 1px solid rgba(59, 130, 246, 0.4);
+    }
+
+    .tag span.icon {
+      font-size: 14px;
+    }
+
+    .search-box {
+      margin-top: 8px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid #1f2933;
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .search-box input:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.5);
+    }
+
+    .filters {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    .filter-pill {
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid #1f2937;
+      background: #020617;
+      cursor: pointer;
+      color: #9ca3af;
+    }
+
+    .filter-pill.active {
+      background: #2563eb;
+      color: #ffffff;
+      border-color: #2563eb;
+    }
+
+    .section-title {
+      margin-top: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #9ca3af;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+    }
+
+    .company-list {
+      margin-top: 6px;
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .company-item {
+      padding: 8px 8px;
+      margin-bottom: 4px;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      background: rgba(15, 23, 42, 0.9);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .company-item:hover {
+      border-color: #1f2937;
+      background: rgba(15, 23, 42, 1);
+    }
+
+    .company-item.active {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.5);
+    }
+
+    .company-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #e5e7eb;
+    }
+
+    .company-meta {
+      font-size: 11px;
+      color: #9ca3af;
+    }
+
+    .company-tag-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 2px;
+    }
+
+    .small-tag {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid #1f2937;
+      color: #9ca3af;
+    }
+
+    .small-tag.type-fulltime { border-color: #22c55e; color: #bbf7d0; }
+    .small-tag.type-internship { border-color: #eab308; color: #facc15; }
+    .small-tag.type-remote { border-color: #38bdf8; color: #bae6fd; }
+
+    .details-card {
+      margin-top: 6px;
+      padding: 8px;
+      border-radius: 10px;
+      border: 1px solid #1f2937;
+      background: rgba(15, 23, 42, 0.95);
+      font-size: 12px;
+    }
+
+    .details-card h3 {
+      margin: 0 0 4px 0;
+      font-size: 14px;
+    }
+
+    .details-row {
+      margin-top: 3px;
+    }
+
+    .details-label {
+      color: #9ca3af;
+      font-size: 11px;
+    }
+
+    .details-value {
+      font-size: 12px;
+    }
+
+    .details-actions {
+      margin-top: 8px;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      font-size: 11px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .btn-primary {
+      background: #2563eb;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #1d4ed8;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid #334155;
+      color: #e5e7eb;
+    }
+
+    .btn-ghost:hover {
+      background: #0f172a;
+    }
+
+    .globe-wrap {
+      flex: 1;
+      position: relative;
+    }
+
+    #globeContainer {
+      width: 100%;
+      height: 100%;
+    }
+
+    .hint {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 11px;
+      color: #9ca3af;
+      background: rgba(15, 23, 42, 0.8);
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid #1f2937;
+      pointer-events: none;
+    }
+
+    @media (max-width: 800px) {
+      .layout {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+        height: 45vh;
+      }
+      .globe-wrap {
+        height: 55vh;
+      }
+    }
+  </style>
 </head>
-
 <body>
-  <header class="header">
-    <div class="logo">
-      <a href="index.html">
-        <img src="logo.png" alt="Website Logo" class="logo-img">
-      </a>
-    </div>
-    <div class="header-right">
 
-      <!-- Default PNG icon -->
-      <img src="user.png" alt="User Icon" id="userIconImg" class="user-icon-img">
-
-      <!-- Letter Avatar (hidden initially) -->
-      <div class="user-icon hidden" id="userAvatar">U</div>
-    </div>
-    <!-- Mobile-only Fire Roadmap Button -->
-<a href="#" class="fire-btn mobile-roadmap roadmap-trigger" aria-label="Roadmap AI/ML">
-  <svg viewBox="0 0 500 80" class="fire-svg">
-    <defs>
-      <linearGradient id="fireGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" stop-color="#ff9a00"/>
-        <stop offset="25%" stop-color="#ff0000"/>
-        <stop offset="50%" stop-color="#ff6a00"/>
-        <stop offset="75%" stop-color="#ff3c00"/>
-        <stop offset="100%" stop-color="#ff0000"/>
-      </linearGradient>
-    </defs>
-    <text x="49%" y="50%" dy=".1em" text-anchor="middle" dominant-baseline="middle" fill="url(#fireGradient)" style="font-family: inherit;">
-       ROADMAP AI/ML
-    </text>
-  </svg>
-</a>
-
-
-    
-
-
-
-    <!-- Hamburger Icon for Mobile -->
-    <div class="menu-toggle" onclick="toggleMenu()">☰</div>
-
-    <nav class="nav-links">
-      <ul>
-        <li><a href="index.html">HOME</a></li>
-        <li><a href="daily.html" class="protected">ROADMAP</a></li>
-        <li><a href="roadmap.html" class="special protected">2 Years Challenge</a></li>
-        <li><a href="projects.html" class="protected">PROJECTS</a></li>
-        <li><a href="notes.html" class="protected">NOTES</a></li>
-        <li><a href="media.html" class="protected">CONTECT US</a></li>
-        <li><a href="about.html" class="protected">ABOUT</a></li>
-      </ul>
-    </nav>
-    <!-- Social Icons -->
-    <div class="social-icons">
-      <!-- 2-Year Challenge button (only mobile) -->
-
-
-      <a href="https://www.linkedin.com/in/utkarshverma89/" target="_blank">
-        <img src="linkedin.png" alt="LinkedIn">
-      </a>
-      <a href="https://github.com/utkar89" target="_blank">
-        <img src="github.png" alt="GitHub">
-      </a>
-      <a href="https://youtube.com/@lifewithlogic89?si=Vb7KGYP-T8dBZ84Chttps://youtube.com/@lifewithlogic89?si=Vb7KGYP-T8dBZ84C"
-        target="_blank">
-        <img src="youtube.png" alt="YouTube">
-      </a>
-      <a href="https://www.instagram.com/lifewith_logic?igsh=MTA3emR4eWJoOWVtMw%3D%3D&utm_source=qr" target="_blank">
-        <img src="instagram.png" alt="Instagram">
-      </a>
+<div class="layout">
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar">
+    <div>
+      <div class="app-title">IT & CS Companies — Global Map</div>
+      <div class="subtitle">3D Earth • Click markers or list items to view full details.</div>
+      <div class="tag">
+        <span class="icon">🌍</span>
+        Interactive 3D globe • Demo
+      </div>
     </div>
 
-  </header>
-  <!-- Mobile-only Social Icons -->
-<div class="mobile-social-icons">
-  <a href="https://www.linkedin.com/in/utkarshverma89/" target="_blank">
-    <img src="linkedin.png" alt="LinkedIn">
-  </a>
-  <a href="https://github.com/utkar89" target="_blank">
-    <img src="github.png" alt="GitHub">
-  </a>
-  <a href="https://youtube.com/@lifewithlogic89" target="_blank">
-    <img src="youtube.png" alt="YouTube">
-  </a>
-  <a href="https://www.instagram.com/lifewith_logic" target="_blank">
-    <img src="instagram.png" alt="Instagram">
-  </a>
+    <!-- SEARCH -->
+    <div class="search-box">
+      <input id="searchInput" type="text" placeholder="Search by company / country / city..." />
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filters">
+      <button class="filter-pill active" data-type="all">All</button>
+      <button class="filter-pill" data-type="fulltime">Full-time</button>
+      <button class="filter-pill" data-type="internship">Internship</button>
+      <button class="filter-pill" data-type="remote">Remote</button>
+    </div>
+
+    <!-- LIST -->
+    <div class="section-title">Companies</div>
+    <div id="companyList" class="company-list"></div>
+
+    <!-- DETAILS -->
+    <div class="section-title">Details</div>
+    <div id="detailsCard" class="details-card">
+      <h3>Select a company</h3>
+      <div class="details-row">
+        <span class="details-label">Hint: </span>
+        <span class="details-value">Click any red point on the globe or an item in the list.</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- RIGHT GLOBE AREA -->
+  <main class="globe-wrap">
+    <div id="globeContainer"></div>
+    <div class="hint">Drag to rotate • Scroll to zoom • Click red markers for details</div>
+  </main>
 </div>
 
-  <section class="hero-utkarsh">
-    <div class="hero-content-utkarsh">
-      <!-- Glitch Typing Name -->
-      <h1 id="glitchText-utkarsh"></h1>
-
-      <!-- Typing Effect Courses -->
-      <h2><span id="typing-utkarsh"></span><span style="color:#00ffcc">|</span></h2>
-
-      <!-- Buttons Row -->
-      <div class="buttons-utkarsh">
-        <a href="2year.html" class="protected">2-Year Learning Challenge</a>
-        <a href="daily.html" class="protected">Daily Notes</a>
-        <a href="projects.html" class="protected">Projects</a>
-        <a href="youtube.html" class="protected">YouTube Videos</a>
-      </div>
-
-
-
-      <!-- Social Icons Row -->
-      <div class="social-icons-utkarsh">
-        <a href="#"><i class="fab fa-github"></i></a>
-        <a href="#"><i class="fab fa-linkedin"></i></a>
-        <a href="#"><i class="fab fa-youtube"></i></a>
-        <a href="#"><i class="fas fa-user"></i></a>
-      </div>
-    </div>
-  </section>
-  <!-- ✅ sahi structure -->
-  <div class="user-overlay" id="userOverlay">
-    <!-- Avatar Area -->
-    <div class="overlay-avatar-box">
-      <img src="user.png" alt="User Icon" id="overlayIconImg" class="user-icon-img">
-      <div class="user-icon hidden" id="overlayAvatar">U</div>
-    </div>
-
-    <div class="user-name" id="overlayName">Hi USER</div>
-
-    <!-- Tabs -->
-    <div class="auth-tabs" id="authTabs">
-      <button id="loginTab" class="active">Login</button>
-      <button id="signupTab">Sign Up</button>
-    </div>
-
-    <!-- Login Form -->
-    <form id="loginForm">
-      <input type="email" id="loginEmail" placeholder="Email" required />
-      <input type="password" id="loginPassword" placeholder="Password" required />
-      <button type="submit">Login</button>
-      <small><a href="#" id="forgotPassword">Forgot Password?</a></small>
-    </form>
-
-    <!-- Signup Form -->
-    <form id="signupForm" class="hidden">
-      <input type="text" id="signupName" placeholder="Full Name" required />
-      <input type="email" id="signupEmail" placeholder="Email" required />
-      <input type="password" id="signupPassword" placeholder="Password" required />
-      <input type="password" id="signupConfirm" placeholder="Confirm Password" required />
-      <button type="submit">Sign Up</button>
-    </form>
-
-    <button id="logoutBtn" class="logout-btn">Logout</button>
-
-    <!-- ✅ Overlay options menu ab andar hai -->
-    <div class="overlay-menu">
-      <ul>
-       
-
-        <a class="menu-item protected" href="roadmap.html">
-          <i class="fa fa-bolt"></i>
-          <div>
-            <div class="menu-text">ROADMAP</div>
-            <div class="menu-sub">Achieve goal</div>
-          </div>
-        </a>
-
-        <a class="menu-item protected" href="contact.html">
-          <i class="fa fa-circle-notch spinning"></i>
-          <div>
-            <div class="menu-text">Contact Us</div>
-            <div class="menu-sub">Email</div>
-          </div>
-        </a>
-
-
-        <a class="menu-item protected" href="daily.html" target="_blank" rel="noopener">
-          <i class="fa fa-sticky-note"></i>
-          <div>
-            <div class="menu-text">Daily Notes</div>
-          </div>
-        </a>
-
-        <a class="menu-item protected" href="https://youtube.com/yourchannel" target="_blank" rel="noopener">
-          <i class="fa fa-youtube"></i>
-          <div>
-            <div class="menu-text">Daily YouTube Videos</div>
-          </div>
-        </a>
-
-        <a class="menu-item protected" href="roadmap.html" target="_blank" rel="noopener">
-          <i class="fa fa-calendar-check"></i>
-          <div>
-            <div class="menu-text">2 Year Challenge</div>
-          </div>
-        </a>
-      </ul>
-    </div>
-
-
-    <!-- ✅ Social links bhi overlay ke andar -->
-    <div class="overlay-social">
-      <a href="https://www.linkedin.com/in/yourprofile" target="_blank" rel="noopener"><i
-          class="fab fa-linkedin"></i><span>LinkedIn</span></a>
-      <a href="https://github.com/yourusername" target="_blank" rel="noopener"><i
-          class="fab fa-github"></i><span>GitHub</span></a>
-      <a href="https://youtube.com/yourchannel" target="_blank" rel="noopener"><i
-          class="fab fa-youtube"></i><span>YouTube</span></a>
-      <a href="https://instagram.com/yourhandle" target="_blank" rel="noopener"><i
-          class="fab fa-instagram"></i><span>Instagram</span></a>
-    </div>
-  </div> <!-- ✅ yaha overlay finally band ho rahi hai -->
-
-  <!-- Backdrop overlay ke bahar hi rahe -->
-  <div id="backdrop" class="overlay-backdrop"></div>
+<!-- SCRIPTS -->
+<script src="https://unpkg.com/three"></script>
+<script src="https://unpkg.com/globe.gl"></script>
 
 <script>
-  // ==================
-  // Menu toggle (mobile)
-  // ==================
-  function toggleMenu() {
-    document.querySelector('.nav-links').classList.toggle('active');
-  }
+  // --- DATA: You can add more companies here ---
+  const companies = [
+    {
+      name: "Google",
+      city: "Mountain View",
+      country: "USA",
+      roles: "SDE, ML Engineer, Data Scientist",
+      website: "https://careers.google.com/",
+      type: "fulltime",
+      lat: 37.422, lng: -122.084
+    },
+    {
+      name: "Microsoft",
+      city: "Redmond",
+      country: "USA",
+      roles: "Cloud Engineer, AI Engineer",
+      website: "https://careers.microsoft.com/",
+      type: "fulltime",
+      lat: 47.6401, lng: -122.1295
+    },
+    {
+      name: "Amazon",
+      city: "Seattle",
+      country: "USA",
+      roles: "SDE, Data Engineer, SRE",
+      website: "https://www.amazon.jobs/",
+      type: "fulltime",
+      lat: 47.6225, lng: -122.3365
+    },
+    {
+      name: "Meta (Facebook)",
+      city: "Menlo Park",
+      country: "USA",
+      roles: "Frontend, Backend, AR/VR",
+      website: "https://www.metacareers.com/",
+      type: "fulltime",
+      lat: 37.4848, lng: -122.1484
+    },
+    {
+      name: "Apple",
+      city: "Cupertino",
+      country: "USA",
+      roles: "iOS Dev, Systems Engineer",
+      website: "https://www.apple.com/careers/",
+      type: "fulltime",
+      lat: 37.3349, lng: -122.0090
+    },
+    {
+      name: "Infosys",
+      city: "Bangalore",
+      country: "India",
+      roles: "Backend Developer, Internship",
+      website: "https://www.infosys.com/careers",
+      type: "internship",
+      lat: 12.9716, lng: 77.5946
+    },
+    {
+      name: "TCS",
+      city: "Mumbai",
+      country: "India",
+      roles: "Full Stack Dev, QA, Fresher Hiring",
+      website: "https://www.tcs.com/careers",
+      type: "fulltime",
+      lat: 19.0760, lng: 72.8777
+    },
+    {
+      name: "Wipro",
+      city: "Bangalore",
+      country: "India",
+      roles: "Cyber Security, Support Engineer",
+      website: "https://careers.wipro.com/",
+      type: "fulltime",
+      lat: 12.9716, lng: 77.5946
+    },
+    {
+      name: "HCLTech",
+      city: "Noida",
+      country: "India",
+      roles: "Software Engineer, Remote Options",
+      website: "https://www.hcltech.com/careers",
+      type: "remote",
+      lat: 28.5355, lng: 77.3910
+    },
+    {
+      name: "IBM",
+      city: "New York",
+      country: "USA",
+      roles: "Consultant, Cloud, AI",
+      website: "https://www.ibm.com/careers",
+      type: "fulltime",
+      lat: 40.7549, lng: -73.9840
+    },
+    {
+      name: "SAP",
+      city: "Walldorf",
+      country: "Germany",
+      roles: "Backend, ERP Developer",
+      website: "https://www.sap.com/about/careers.html",
+      type: "fulltime",
+      lat: 49.3064, lng: 8.6415
+    },
+    {
+      name: "Spotify",
+      city: "Stockholm",
+      country: "Sweden",
+      roles: "Backend, Data, Internship",
+      website: "https://www.lifeatspotify.com/",
+      type: "internship",
+      lat: 59.3293, lng: 18.0686
+    },
+    {
+      name: "Atlassian",
+      city: "Sydney",
+      country: "Australia",
+      roles: "Remote-first, Full Stack",
+      website: "https://www.atlassian.com/company/careers",
+      type: "remote",
+      lat: -33.8688, lng: 151.2093
+    },
+    {
+      name: "Shopify",
+      city: "Remote",
+      country: "Canada",
+      roles: "Remote Dev, Frontend/Backend",
+      website: "https://www.shopify.com/careers",
+      type: "remote",
+      lat: 43.6532, lng: -79.3832
+    },
+    {
+      name: "OpenAI",
+      city: "San Francisco",
+      country: "USA",
+      roles: "Research, ML Engineer",
+      website: "https://openai.com/careers",
+      type: "fulltime",
+      lat: 37.7749, lng: -122.4194
+    }
+  ];
 
-  // ==================
-  // Glitch typing effect
-  // ==================
-  function getRandomColorUtkarsh() {
-    const colors = ["#ff4757", "#1e90ff", "#2ed573", "#ffa502", "#eccc68", "#00cec9", "#fd79a8"];
-    return colors[Math.floor(Math.random() * colors.length)];
-  }
+  // Labels for countries (for clarity)
+  const countryLabels = [
+    { lat: 20.5937, lng: 78.9629, label: "India" },
+    { lat: 37.0902, lng: -95.7129, label: "USA" },
+    { lat: 51.1657, lng: 10.4515, label: "Germany" },
+    { lat: 36.2048, lng: 138.2529, label: "Japan" },
+    { lat: -25.2744, lng: 133.7751, label: "Australia" },
+    { lat: 56.1304, lng: -106.3468, label: "Canada" },
+    { lat: 59.334, lng: 18.0686, label: "Sweden" }
+  ];
 
-  const textUtkarsh = "Hi, I'm Utkarsh";
-  const containerUtkarsh = document.getElementById("glitchText-utkarsh");
-  let nameIndexUtkarsh = 0;
+  const globeContainer = document.getElementById("globeContainer");
 
-  function typeGlitchUtkarsh() {
-    if (nameIndexUtkarsh < textUtkarsh.length) {
-      const span = document.createElement("span");
-      span.textContent = textUtkarsh[nameIndexUtkarsh];
-      span.style.color = getRandomColorUtkarsh();
-      span.classList.add("glitch-letter-utkarsh");
-      containerUtkarsh.appendChild(span);
-      nameIndexUtkarsh++;
-      setTimeout(typeGlitchUtkarsh, 200);
+  const world = Globe()(globeContainer)
+    .globeImageUrl("https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg")
+    .bumpImageUrl("https://unpkg.com/three-globe/example/img/earth-topology.png")
+    .backgroundImageUrl("https://unpkg.com/three-globe/example/img/night-sky.png")
+    .labelsData(countryLabels)
+    .labelColor(() => "#38bdf8")
+    .labelSize(1.2)
+    .labelDotRadius(0.25)
+    .pointAltitude(0.06)
+    .pointColor(() => "red")
+    .pointRadius(0.35)
+    .pointsData(companies)
+    // pulse rings
+    .ringColor(() => "rgba(248, 113, 113, 0.7)")
+    .ringMaxRadius(4)
+    .ringPropagationSpeed(2)
+    .ringRepeatPeriod(2000);
+
+  // slow auto-rotation
+  world.controls().autoRotate = true;
+  world.controls().autoRotateSpeed = 0.5;
+
+  // STATE
+  let currentTypeFilter = "all";
+  let currentSearch = "";
+  let activeCompany = null;
+
+  const listEl = document.getElementById("companyList");
+  const detailsEl = document.getElementById("detailsCard");
+  const searchInput = document.getElementById("searchInput");
+  const filterButtons = document.querySelectorAll(".filter-pill");
+
+  function applyFilters() {
+    const search = currentSearch.trim().toLowerCase();
+
+    const filtered = companies.filter(c => {
+      // type filter
+      if (currentTypeFilter !== "all" && c.type !== currentTypeFilter) return false;
+
+      // search filter
+      if (search) {
+        const text = (c.name + " " + c.city + " " + c.country).toLowerCase();
+        if (!text.includes(search)) return false;
+      }
+      return true;
+    });
+
+    world.pointsData(filtered);
+    renderCompanyList(filtered);
+
+    // rings only on active company still in filtered list
+    if (activeCompany && filtered.includes(activeCompany)) {
+      world.ringsData([activeCompany]);
+    } else {
+      world.ringsData([]);
+      activeCompany = null;
+      resetDetailsCard();
     }
   }
-  typeGlitchUtkarsh();
 
-  // ==================
-  // Typing effect
-  // ==================
-  const textsUtkarsh = ["Learn Java", "Learn Python", "Learn Web Development", "Learn C++"];
-  let countUtkarsh = 0, indexUtkarsh = 0;
+  function renderCompanyList(list) {
+    listEl.innerHTML = "";
+    list.forEach(c => {
+      const item = document.createElement("div");
+      item.className = "company-item";
+      item.dataset.name = c.name;
 
-  (function typeUtkarsh() {
-    if (countUtkarsh === textsUtkarsh.length) countUtkarsh = 0;
-    const currentTextUtkarsh = textsUtkarsh[countUtkarsh];
-    const letterUtkarsh = currentTextUtkarsh.slice(0, ++indexUtkarsh);
-    document.getElementById("typing-utkarsh").textContent = letterUtkarsh;
-    if (letterUtkarsh.length === currentTextUtkarsh.length) {
-      countUtkarsh++; indexUtkarsh = 0; setTimeout(typeUtkarsh, 1200);
-    } else setTimeout(typeUtkarsh, 100);
-  })();
-
-  // ==================
-  // Firebase setup
-  // ==================
-  const firebaseConfig = {
-    apiKey: "AIzaSyDgCULYRXS8Ef2sMQQGKhMbQ9kRrY3mD3A",
-    authDomain: "roadmap-8e7c4.firebaseapp.com",
-    projectId: "roadmap-8e7c4",
-    storageBucket: "roadmap-8e7c4.firebasestorage.app",
-    messagingSenderId: "823395412800",
-    appId: "1:823395412800:web:3b92bd90d62cd9a942e8a5",
-    measurementId: "G-MTQLRR2EDN"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-
-  // ==================
-  // Elements
-  // ==================
-  const userOverlay = document.getElementById("userOverlay");
-  const backdrop = document.getElementById("backdrop");
-  const loginForm = document.getElementById("loginForm");
-  const signupForm = document.getElementById("signupForm");
-  const logoutBtn = document.getElementById("logoutBtn");
-  const loginTab = document.getElementById("loginTab");
-  const signupTab = document.getElementById("signupTab");
-  const authTabs = document.getElementById("authTabs");
-  const overlayName = document.getElementById("overlayName");
-  const darkToggle = document.getElementById("darkToggle");
-
-  // ==================
-  // Dark mode
-  // ==================
-  
-  // ==================
-  // Overlay open/close
-  // ==================
-  function openOverlay(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    userOverlay.classList.add("active");
-    backdrop.classList.add("active");
-  }
-  function closeOverlay() {
-    userOverlay.classList.remove("active");
-    backdrop.classList.remove("active");
-  }
-
-  // 🟢 Bind events for user icon (desktop + mobile safe)
-  ["click", "touchend", "pointerdown"].forEach(evt => {
-    document.getElementById("userIconImg").addEventListener(evt, openOverlay);
-    document.getElementById("userAvatar").addEventListener(evt, openOverlay);
-  });
-
-  // Backdrop close
-  backdrop.addEventListener("click", closeOverlay);
-
-  // ==================
-  // Tabs
-  // ==================
-  loginTab.addEventListener("click", () => {
-    loginTab.classList.add("active"); signupTab.classList.remove("active");
-    loginForm.classList.remove("hidden"); signupForm.classList.add("hidden");
-  });
-  signupTab.addEventListener("click", () => {
-    signupTab.classList.add("active"); loginTab.classList.remove("active");
-    signupForm.classList.remove("hidden"); loginForm.classList.add("hidden");
-  });
-
-  // ==================
-  // Auth
-  // ==================
-  loginForm.addEventListener("submit", e => {
-    e.preventDefault();
-    const email = document.getElementById("loginEmail").value;
-    const password = document.getElementById("loginPassword").value;
-    auth.signInWithEmailAndPassword(email, password)
-      .then(() => loginForm.reset())
-      .catch(err => alert(err.message));
-  });
-
-  signupForm.addEventListener("submit", e => {
-    e.preventDefault();
-    const name = document.getElementById("signupName").value;
-    const email = document.getElementById("signupEmail").value;
-    const password = document.getElementById("signupPassword").value;
-    const confirm = document.getElementById("signupConfirm").value;
-    if (password !== confirm) return alert("Passwords do not match!");
-    auth.createUserWithEmailAndPassword(email, password)
-      .then(cred => cred.user.updateProfile({ displayName: name }))
-      .then(() => signupForm.reset())
-      .catch(err => alert(err.message));
-  });
-
-  logoutBtn.addEventListener("click", () => auth.signOut());
-
-  // ==================
-  // State change
-  // ==================
-  auth.onAuthStateChanged(user => {
-  if (user) {
-    const name = user.displayName || user.email;
-    const firstLetter = name.charAt(0).toUpperCase();
-
-    // Avatar update
-    document.getElementById("userIconImg").classList.add("hidden");
-    const avatar = document.getElementById("userAvatar");
-    avatar.classList.remove("hidden");
-    avatar.textContent = firstLetter;
-
-    document.getElementById("overlayIconImg").classList.add("hidden");
-    const overlayAvatar = document.getElementById("overlayAvatar");
-    overlayAvatar.classList.remove("hidden");
-    overlayAvatar.textContent = firstLetter;
-
-    // Name update
-    overlayName.textContent = "Hi " + name.toUpperCase();
-
-    // ✅ Hide login/signup forms
-    loginForm.classList.add("hidden");
-    signupForm.classList.add("hidden");
-    authTabs.classList.add("hidden");
-
-    // ✅ Show logout button
-    logoutBtn.classList.add("show");
-
-    // Unlock protected links
-    document.querySelectorAll(".protected").forEach(el => el.classList.remove("locked"));
-  } else {
-    // Avatar reset
-    document.getElementById("userIconImg").classList.remove("hidden");
-    document.getElementById("userAvatar").classList.add("hidden");
-    document.getElementById("overlayIconImg").classList.remove("hidden");
-    document.getElementById("overlayAvatar").classList.add("hidden");
-
-    // Name reset
-    overlayName.textContent = "Hi USER";
-
-    // ✅ Show login form by default
-    loginForm.classList.remove("hidden");
-    signupForm.classList.add("hidden");
-    authTabs.classList.remove("hidden");
-
-    // ✅ Hide logout button
-    logoutBtn.classList.remove("show");
-
-    // Tabs reset
-    loginTab.classList.add("active");
-    signupTab.classList.remove("active");
-
-    // Lock protected links
-    document.querySelectorAll(".protected").forEach(el => el.classList.add("locked"));
-  }
-});
-
-
-  // ==================
-  // Protected links
-  // ==================
-  document.querySelectorAll(".protected").forEach(link => {
-    link.addEventListener("click", e => {
-      if (!auth.currentUser) {
-        e.preventDefault();
-        alert("⚠️ Please login first to access this page!");
-        openOverlay(e);
+      if (activeCompany && activeCompany.name === c.name) {
+        item.classList.add("active");
       }
+
+      item.innerHTML = `
+        <div class="company-name">${c.name}</div>
+        <div class="company-meta">${c.city}, ${c.country}</div>
+        <div class="company-tag-row">
+          <span class="small-tag type-${c.type}">
+            ${c.type === "fulltime" ? "Full-time" : c.type === "internship" ? "Internship" : "Remote"}
+          </span>
+        </div>
+      `;
+
+      item.addEventListener("click", () => {
+        focusOnCompany(c);
+      });
+
+      listEl.appendChild(item);
+    });
+
+    if (!list.length) {
+      listEl.innerHTML = `<div style="font-size:12px;color:#9ca3af;margin-top:4px;">No companies found for this filter.</div>`;
+    }
+  }
+
+  function resetDetailsCard() {
+    detailsEl.innerHTML = `
+      <h3>Select a company</h3>
+      <div class="details-row">
+        <span class="details-label">Hint: </span>
+        <span class="details-value">Use the list or click red markers on the globe.</span>
+      </div>
+    `;
+  }
+
+  function updateDetailsCard(c) {
+    detailsEl.innerHTML = `
+      <h3>${c.name}</h3>
+      <div class="details-row">
+        <span class="details-label">Location: </span>
+        <span class="details-value">${c.city}, ${c.country}</span>
+      </div>
+      <div class="details-row">
+        <span class="details-label">Roles: </span>
+        <span class="details-value">${c.roles}</span>
+      </div>
+      <div class="details-row">
+        <span class="details-label">Type: </span>
+        <span class="details-value">${
+          c.type === "fulltime" ? "Full-time" :
+          c.type === "internship" ? "Internship / Fresher Friendly" :
+          "Remote (Work From Home)"
+        }</span>
+      </div>
+      <div class="details-actions">
+        <a class="btn btn-primary" href="${c.website}" target="_blank" rel="noopener">
+          🔗 Open Careers Page
+        </a>
+        <button class="btn btn-ghost" onclick="alert('Yaha future me: direct apply form / notes / save feature add kar sakte ho 😊')">
+          ⭐ Save for later (demo)
+        </button>
+      </div>
+    `;
+  }
+
+  function focusOnCompany(c) {
+    activeCompany = c;
+    updateDetailsCard(c);
+
+    // focus globe camera
+    world.pointOfView({ lat: c.lat, lng: c.lng, altitude: 1.5 }, 1000);
+
+    // pulse rings on selected company
+    world.ringsData([c]);
+
+    // update active class on list
+    document.querySelectorAll(".company-item").forEach(el => {
+      el.classList.toggle("active", el.dataset.name === c.name);
+    });
+  }
+
+  // click on globe marker
+  world.onPointClick(c => {
+    // find from original list (so same object ref)
+    const found = companies.find(x => x.name === c.name);
+    if (found) focusOnCompany(found);
+  });
+
+  // Search input handler
+  searchInput.addEventListener("input", (e) => {
+    currentSearch = e.target.value;
+    applyFilters();
+  });
+
+  // Filter buttons handler
+  filterButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      filterButtons.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      currentTypeFilter = btn.dataset.type;
+      applyFilters();
     });
   });
-  // Roadmap modal open/close
-// ==================
-// Roadmap modal open/close (safe + DOM loaded)
-// ==================
-document.addEventListener("DOMContentLoaded", () => {
-  const roadmapBtn = document.querySelector('.roadmap-trigger');
-  const roadmapModal = document.getElementById('roadmapModal');
-  const roadmapBackdrop = document.getElementById('roadmapBackdrop');
-  const roadmapClose = document.getElementById('roadmapClose');
 
-  if (roadmapBtn && roadmapModal) {
-    roadmapBtn.addEventListener('click', e => {
-      e.preventDefault();
-      roadmapModal.classList.add('active');
-    });
-  }
-
-  if (roadmapBackdrop && roadmapModal) {
-    roadmapBackdrop.addEventListener('click', () => roadmapModal.classList.remove('active'));
-  }
-
-  if (roadmapClose && roadmapModal) {
-    roadmapClose.addEventListener('click', () => roadmapModal.classList.remove('active'));
-  }
-});
-
-
+  // initial render
+  renderCompanyList(companies);
 </script>
-<!-- Roadmap Options Modal -->
-<div id="roadmapModal" class="modal" role="dialog" aria-modal="true">
-  <div class="modal-backdrop" id="roadmapBackdrop"></div>
-  <div class="modal-panel" role="document">
-    <button class="modal-close" id="roadmapClose" aria-label="Close">✕</button>
-    <h3>Choose Roadmap</h3>
-    <p class="modal-sub">Select one option</p>
-
-    <div class="modal-options">
-  <!-- Option 1 -->
-  <a href="virtual-roadmap.html" class="modal-option">
-    <div class="opt-left">🔮</div>
-    <div class="opt-body">
-      <strong>Virtual Roadmap</strong>
-      <span class="opt-desc">Interactive experience</span>
-    </div>
-    <div class="opt-right">→</div>
-  </a>
-
-  <!-- Option 2 -->
-  <a href="roadmap.html" class="modal-option">
-    <div class="opt-left">📄</div>
-    <div class="opt-body">
-      <strong>Roadmap</strong>
-      <span class="opt-desc">Standard static page</span>
-    </div>
-    <div class="opt-right">→</div>
-  </a>
-
-  <!-- ✅ New Option 3 -->
-  <a href="2year.html" class="modal-option">
-    <div class="opt-left">⏳</div>
-    <div class="opt-body">
-      <strong>2-Year Challenge</strong>
-      <span class="opt-desc">Step by step journey</span>
-    </div>
-    <div class="opt-right">→</div>
-  </a>
-</div>
-
-  </div>
-</div>
-
-
-
 
 </body>
-
 </html>
-
