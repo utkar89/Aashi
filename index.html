@@ -24,17 +24,19 @@
       height: 100vh;
     }
 
-   .sidebar {
-  width: 340px;          /* जो भी width तुम रखो */
-  flex: 0 0 340px;       /* 👈 अब sidebar kabhi shrink नहीं होगा */
-  background: #0f172a;
-  border-right: 1px solid #1e293b;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  overflow-y: auto;
-}
+    .sidebar {
+      width: 340px;
+      /* जो भी width तुम रखो */
+      flex: 0 0 340px;
+      /* 👈 अब sidebar kabhi shrink नहीं होगा */
+      background: #0f172a;
+      border-right: 1px solid #1e293b;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      overflow-y: auto;
+    }
 
 
     .app-title {
@@ -392,6 +394,7 @@
       </div>
     </aside>
 
+
     <!-- RIGHT GLOBE AREA -->
     <main class="globe-wrap">
       <div id="globeContainer"></div>
@@ -457,6 +460,7 @@
     let activeCompany = null;
 
     // Labels for countries (for clarity on globe)
+    // 🌍 All world countries label data (Premium Edition)
     const countryLabels = [
       { lat: 20.5937, lng: 78.9629, label: "India" },
       { lat: 37.0902, lng: -95.7129, label: "USA" },
@@ -464,8 +468,29 @@
       { lat: 36.2048, lng: 138.2529, label: "Japan" },
       { lat: -25.2744, lng: 133.7751, label: "Australia" },
       { lat: 56.1304, lng: -106.3468, label: "Canada" },
-      { lat: 59.334, lng: 18.0686, label: "Sweden" }
+      { lat: 60.1282, lng: 18.6435, label: "Sweden" },
+      { lat: 46.2276, lng: 2.2137, label: "France" },
+      { lat: 35.8617, lng: 104.1954, label: "China" },
+      { lat: 55.3781, lng: -3.4360, label: "United Kingdom" },
+      { lat: 51.1657, lng: 10.4515, label: "Europe" },
+      { lat: -14.2350, lng: -51.9253, label: "Brazil" },
+      { lat: -1.2864, lng: 36.8172, label: "South Africa" },
+      { lat: 40.4637, lng: -3.7492, label: "Spain" },
+      { lat: 41.8719, lng: 12.5674, label: "Italy" },
+      { lat: 52.1326, lng: 5.2913, label: "Netherlands" },
+      { lat: 52.2370, lng: 21.0175, label: "Poland" },
+      { lat: 1.3521, lng: 103.8198, label: "Singapore" },
+      { lat: 23.4241, lng: 53.8478, label: "UAE" },
+      { lat: 3.1390, lng: 101.6869, label: "Malaysia" },
+      { lat: 50.8503, lng: 4.3517, label: "Belgium" },
+      { lat: 56.2639, lng: 9.5018, label: "Denmark" },
+      { lat: 61.9241, lng: 25.7482, label: "Finland" },
+      { lat: 35.4732, lng: 133.0474, label: "South Korea" },
+      { lat: 21.0285, lng: 105.8542, label: "Vietnam" },
+      { lat: 25.2048, lng: 55.2708, label: "Dubai" },
+      { lat: -40.9006, lng: 174.8860, label: "New Zealand" }
     ];
+
 
     // DOM elements
     const globeContainer = document.getElementById("globeContainer");
@@ -477,13 +502,28 @@
 
     function initGlobe() {
       world = Globe()(globeContainer)
-        .globeImageUrl("https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg")
+        // Ultra HD realistic earth textures
+        .globeImageUrl("https://unpkg.com/three-globe/example/img/earth-night.jpg")
         .bumpImageUrl("https://unpkg.com/three-globe/example/img/earth-topology.png")
         .backgroundImageUrl("https://unpkg.com/three-globe/example/img/night-sky.png")
+
+
+        // Atmosphere glow effect
+        .showAtmosphere(true)
+        .atmosphereColor("#3a9bdc")
+        .atmosphereAltitude(0.18)
+
+        // Country name labels (premium glow)
         .labelsData(countryLabels)
-        .labelColor(() => "#38bdf8")
-        .labelSize(1.0)
-        .labelDotRadius(0.25)
+        .labelLat(d => d.lat)
+        .labelLng(d => d.lng)
+        .labelText(d => d.label)
+        .labelColor(() => "#00eaff")
+        .labelSize(1.35)
+        .labelResolution(3)
+        .labelDotRadius(0)
+
+        // Job / company markers
         .pointAltitude(0.06)
         .pointColor(c =>
           c.type === "internship" ? "yellow" :
@@ -492,20 +532,24 @@
         )
         .pointRadius(0.35)
         .pointsData(companies)
+
+        // Pulse glow rings on selected company
         .ringColor(() => "rgba(248, 113, 113, 0.7)")
         .ringMaxRadius(4)
         .ringPropagationSpeed(2)
         .ringRepeatPeriod(2000);
 
+      // Cinematic slow auto rotation
       world.controls().autoRotate = true;
-      world.controls().autoRotateSpeed = 0.5;
+      world.controls().autoRotateSpeed = 0.8;
 
-      // Globe click
+      // Globe click → focus on company & open details
       world.onPointClick(c => {
         const found = companies.find(x => x.name === c.name);
         if (found) focusOnCompany(found);
       });
     }
+
 
     function setupUIEvents() {
       // Search input handler
@@ -569,33 +613,30 @@
           return res.json();
         })
         .then(data => {
-  companies = data;
-  activeCompany = null;
+          companies = data;
+          activeCompany = null;
 
-  if (!world) {
-    initGlobe();
-    setupUIEvents();
-  } else {
-    world.pointsData(companies);
-    world.ringsData([]);
-  }
+          if (!world) {
+            initGlobe();
+            setupUIEvents();
+          } else {
+            world.pointsData(companies);
+            world.ringsData([]);
+          }
 
-  // ⚠ YAHAN ADD KARO
-  applyFilters();
-  renderCompanyList(companies);
-  resetDetailsCard();
+          // ⚠ YAHAN Correct order
+          renderCompanyList(companies);
+          applyFilters();   // 🔥 ab sidebar sahi update hoga
+          resetDetailsCard();
 
-  if (config.center) {
-    world.pointOfView(
-      {
-        lat: config.center.lat,
-        lng: config.center.lng,
-        altitude: config.center.altitude
-      },
-      1000
-    );
-  }
-})
+          if (config.center) {
+            world.pointOfView({
+              lat: config.center.lat,
+              lng: config.center.lng,
+              altitude: config.center.altitude
+            }, 1000);
+          }
+        })
 
 
         .catch(err => {
@@ -639,7 +680,6 @@
         resetDetailsCard();
       }
     }
-
     function renderCompanyList(list) {
       listEl.innerHTML = "";
       list.forEach(c => {
@@ -652,22 +692,18 @@
         }
 
         item.innerHTML = `
-          <div class="company-name">${c.name}</div>
-          <div class="company-meta">${c.city}, ${c.country}</div>
-          <div class="company-tag-row">
-            <span class="small-tag type-${c.type}">
-              ${c.type === "fulltime" ? "Full-time" :
+      <div class="company-name">${c.name}</div>
+      <div class="company-meta">${c.city}, ${c.country}</div>
+      <div class="company-tag-row">
+        <span class="small-tag type-${c.type}">
+          ${c.type === "fulltime" ? "Full-time" :
             c.type === "internship" ? "Internship" :
-              "Remote"
-          }
-            </span>
-          </div>
-        `;
+              "Remote"}
+        </span>
+      </div>
+    `;
 
-        item.addEventListener("click", () => {
-          focusOnCompany(c);
-        });
-
+        item.addEventListener("click", () => focusOnCompany(c));
         listEl.appendChild(item);
       });
 
@@ -727,12 +763,7 @@
         el.classList.toggle("active", el.dataset.name === c.name);
       });
     }
-    function renderCompanyList(list) {
-  listEl.innerHTML = "";
-  list.forEach(company => {
-    // sidebar item display code
-  });
-}
+
 
 
     // 🔥 START: default India load
